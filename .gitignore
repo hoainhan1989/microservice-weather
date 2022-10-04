@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/cloudweather.DataLoader/bin/Debug/net6.0
+/cloudweather.DataLoader/obj
+/cloudweather.Precipitation/bin/Debug/net6.0
+/cloudweather.Precipitation/obj
+/cloudweather.Report/bin/Debug/net6.0
+/cloudweather.Report/obj
+/cloudweather.Temperature/bin/Debug/net6.0
+/cloudweather.Temperature/obj
