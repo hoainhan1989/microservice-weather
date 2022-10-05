@@ -4,7 +4,9 @@ using Newtonsoft.Json;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
-IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json")
+Console.WriteLine("starting data loader");
+
+IConfiguration config = new ConfigurationBuilder().AddJsonFile("appSettings.json")
     .AddEnvironmentVariables().Build();
 
 var servicesConfig = config.GetSection("Services");
