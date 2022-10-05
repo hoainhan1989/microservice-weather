@@ -10,7 +10,7 @@ namespace cloudweather.Report.BusinessLogic
 {
     public interface IWeatherReportAggrator
     {
-        public Task<WeatherReport> BuildWeeklyReport(string zip, int days);
+        public Task<WeatherReport> BuildWeeklyReport(string zip, int? days =0);
     }
     public class WeatherReportAggrator: IWeatherReportAggrator
     {
@@ -27,16 +27,16 @@ namespace cloudweather.Report.BusinessLogic
             _weatherDataConfig = weatherDataConfig.Value;
         }
 
-        public async Task<WeatherReport> BuildWeeklyReport(string zip, int days)
+        public async Task<WeatherReport> BuildWeeklyReport(string zip, int? days = 0)
         {
             var httpClient = _http.CreateClient();
-            var precipData = await FetchPrecipitationData(httpClient, zip, days);
+            var precipData = await FetchPrecipitationData(httpClient, zip, days.Value);
             var totalSnow = GetTotalSnow(precipData);
             var totalRain = GetTotalRain(precipData);
 
             _logger.LogInformation($"BuildWeeklyReport log total snow {totalSnow}");
 
-            var tempData = await FetchTemperatureData(httpClient, zip, days);
+            var tempData = await FetchTemperatureData(httpClient, zip, days.Value);
             var averageHighTemp = tempData.Average(t=> t.TempHighF);
             var averageLowTemp = tempData.Average(t => t.TempLowF);
 
@@ -86,7 +86,7 @@ namespace cloudweather.Report.BusinessLogic
             var tempServiceHost = _weatherDataConfig.TempDataHost;
             var tempServicePort = _weatherDataConfig.TempDataPort;
 
-            return $"{tempServiceProtocol}://{tempServiceHost}:{tempServicePort}/observation/{zip}?day={days}";
+            return $"{tempServiceProtocol}://{tempServiceHost}:{tempServicePort}/observation/{zip}?days={days}";
 
         }
 
@@ -98,6 +98,7 @@ namespace cloudweather.Report.BusinessLogic
                 PropertyNameCaseInsensitive = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
+
             var precipData = await precipRecords.Content.ReadFromJsonAsync<List<PrecipitationModel>>(jsonSerializeOptions);
             return precipData ?? new List<PrecipitationModel>();
         }
@@ -108,7 +109,7 @@ namespace cloudweather.Report.BusinessLogic
             var precipServiceHost = _weatherDataConfig.PrecipDataHost;
             var precipServicePort = _weatherDataConfig.PrecipDataPort;
 
-            return $"{precipServiceProtocol}://{precipServiceHost}:{precipServicePort}/observation/{zip}?day={days}";
+            return $"{precipServiceProtocol}://{precipServiceHost}:{precipServicePort}/observation/{zip}?days={days}";
         }
     }
 }

@@ -20,6 +20,9 @@ builder.Services.Configure<WeatherDataConfig>(builder.Configuration.GetSection("
 var app = builder.Build();
 
 app.MapGet("/weather-report/{zip}",async (string zip, [FromQuery] int? days, IWeatherReportAggrator weatherReport) => {
+    if (days == null)
+        days = 0;
+
     var report = await weatherReport.BuildWeeklyReport(zip, days.Value);
     return Results.Ok(report);
 });
